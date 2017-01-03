@@ -4,6 +4,9 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.WebPage;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -16,10 +19,12 @@ import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 
 
-public class HomePage extends WebPage {
+public class HomePage extends WebPage
+{
 	private static final long serialVersionUID = 1L;
 
-	public HomePage(final PageParameters parameters) {
+	public HomePage(final PageParameters parameters)
+	{
 		super(parameters);
 
 		//add(new Label("version", getApplication().getFrameworkSettings().getVersion()));
@@ -58,7 +63,18 @@ public class HomePage extends WebPage {
 		catch(ParserConfigurationException e){}
 		catch(SAXException e){}
 
-		responseXML = respXML.getDocumentElement().getTagName();
+		//responseXML = respXML.getDocumentElement().getTagName();
+
+
+		Element rootElement = respXML.getDocumentElement();
+		NodeList children = rootElement.getChildNodes();
+
+		for (int i = 0; i < children.getLength(); i++)
+		{
+			Node child = children.item(i);
+			responseXML = responseXML + " " + child;
+		}
+		//responseXML = rootElement.getChildNodes().item(0).toString();
 
 		add(new Label("message", responseXML));
     }
