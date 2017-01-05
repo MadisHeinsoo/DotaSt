@@ -15,8 +15,6 @@ import java.nio.charset.StandardCharsets;
 
 public class HomePage extends WebPage
 {
-	//private static final long serialVersionUID = 1L;
-
     //Generates XML document based on query.
     private Document responseXML(String url, String charset, String query)
     {
@@ -42,35 +40,21 @@ public class HomePage extends WebPage
 	{
 		super(parameters);
 
-		//add(new Label("version", getApplication().getFrameworkSettings().getVersion()));
-
-		// TODO Add your page's components here
-
 		String url = "https://api.steampowered.com/IDOTA2Match_570/GetMatchDetails/v1/";
 		String charset = StandardCharsets.UTF_8.toString();
 		String key = "DD2F5A5CC5099227EA909DE0C6B7E35D";
-		String matchID = "2880090255";
+		String matchID = "2880899735";
 		String format = "XML";
 
 		String query = String.format("format=%s&match_id=%s&key=%s", format, matchID, key);
 
         Document response = responseXML(url, charset, query);
-		Element rootElement = response.getDocumentElement();
-		NodeList children = rootElement.getChildNodes();
 
-		String respXMLasString = "";
-
-		for (int i = 0; i < children.getLength(); i++)
-		{
-			Node child = children.item(i);
-			if (child.getNodeType() == Node.ELEMENT_NODE ) {
-				Element eElement = (Element) child;
-                respXMLasString = respXMLasString + " 88 " + eElement.getNodeName() + " : " + eElement.getTextContent();
-			}
-
-		}
+        //Create new MatchDetails object
+        MatchDetails match = new MatchDetails(response);
+        String duration = match.getDireScore();
 
 
-		add(new Label("message", blabla));
+		add(new Label("message", duration));
     }
 }
