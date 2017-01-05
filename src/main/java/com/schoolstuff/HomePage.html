@@ -1,10 +1,25 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:wicket="http://www.w3.org/1999/xhtml">
 	<head>
 		<meta charset="utf-8" />
 		<title>Dota Stats</title>
 	</head>
 	<body>
-		<span wicket:id="message">Message goes here</span>
+		<form wicket:id="messageInputForm">
+			<input type="text" wicket:id="text"/>
+			<input type="submit" value="find" wicket:id="submit"/>
+		</form>
+		<div>
+			MatchID: <span wicket:id="matchnumber"></span>
+		</div>
+		<div>
+			Duration: <span wicket:id="matchduration"></span>
+		</div>
+		<div>
+			Radiant score: <span wicket:id="rscore"></span> Dire score: <span wicket:id="dscore"></span>
+		</div>
+		<div>
+			Winner: <span wicket:id="winner"></span>
+		</div>
 	</body>
 </html>

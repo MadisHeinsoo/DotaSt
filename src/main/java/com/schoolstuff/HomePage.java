@@ -1,5 +1,11 @@
 package com.schoolstuff;
 
+import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
+import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.WebPage;
@@ -39,22 +45,47 @@ public class HomePage extends WebPage
 	public HomePage(final PageParameters parameters)
 	{
 		super(parameters);
+        final String url = "https://api.steampowered.com/IDOTA2Match_570/GetMatchDetails/v1/";
+        final String charset = StandardCharsets.UTF_8.toString();
+        final String key = "DD2F5A5CC5099227EA909DE0C6B7E35D";
+        final String matchID = "2880899735";
+        final String format = "XML";
 
-		String url = "https://api.steampowered.com/IDOTA2Match_570/GetMatchDetails/v1/";
-		String charset = StandardCharsets.UTF_8.toString();
-		String key = "DD2F5A5CC5099227EA909DE0C6B7E35D";
-		String matchID = "2880899735";
-		String format = "XML";
+        String query = String.format("format=%s&match_id=%s&key=%s", format, matchID, key);
 
-		String query = String.format("format=%s&match_id=%s&key=%s", format, matchID, key);
+        final MatchidModel matchidModel = new MatchidModel();
+
+        Form<?> form = new Form("messageInputForm");
+
+        final TextField<String> text = new TextField<String>("text", new PropertyModel<String>(matchidModel, "matchid"));
+
+        Button button = new Button("submit")
+        {
+            @Override
+            public void onSubmit()
+            {
+                String query = String.format("format=%s&match_id=%s&key=%s", format, text.getConvertedInput(), key);
+                Document response = responseXML(url, charset, query);
+                MatchDetails match = new MatchDetails(response);
+                add(new Label("matchnumber", match.getMatchid()));
+                add(new Label("matchduration", match.getDuration()));
+                add(new Label("rscore", match.getRadiantScore()));
+                add(new Label("dscore", match.getDireScore()));
+                add(new Label("winner", match.getWinner()));
+                super.onSubmit();
+            }
+        };
+        add(form);
+        form.add(text);
+        form.add(button);
 
         Document response = responseXML(url, charset, query);
-
-        //Create new MatchDetails object
         MatchDetails match = new MatchDetails(response);
-        String duration = match.getDireScore();
 
-
-		add(new Label("message", duration));
+        add(new Label("matchnumber", match.getMatchid()));
+        add(new Label("matchduration", match.getDuration()));
+        add(new Label("rscore", match.getRadiantScore()));
+        add(new Label("dscore", match.getDireScore()));
+        add(new Label("winner", match.getWinner()));
     }
 }
