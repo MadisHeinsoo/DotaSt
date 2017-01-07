@@ -5,17 +5,13 @@
 		<title>Dota Stats</title>
 	</head>
 	<body>
-		<div>
-			MatchID: <span wicket:id="matchnumber"></span>
-		</div>
-		<div>
-			Duration: <span wicket:id="matchduration"></span>
-		</div>
-		<div>
-			Radiant score: <span wicket:id="rscore"></span> Dire score: <span wicket:id="dscore"></span>
-		</div>
-		<div>
-			Winner: <span wicket:id="winner"></span>
-		</div>
+		<form wicket:id="searchForm">
+			<p>
+				<label>MatchID</label>:
+				<input wicket:id="matchid" type="text"/>
+			</p>
+			<input type="submit" value="Search" />
+		</form>
+		<div wicket:id="feedback"></div>
 	</body>
 </html>

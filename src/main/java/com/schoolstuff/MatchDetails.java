@@ -22,10 +22,10 @@ public class MatchDetails
         matchid = rootElement.getElementsByTagName("match_id").item(0).getTextContent();
         radiantScore = rootElement.getElementsByTagName("radiant_score").item(0).getTextContent();
         direScore =  rootElement.getElementsByTagName("dire_score").item(0).getTextContent();
-        if(rootElement.getElementsByTagName("radiant_win").item(0).getTextContent() == "false")
-            winner = "dire";
+        if(rootElement.getElementsByTagName("radiant_win").item(0).getTextContent().equals("false"))
+            winner = "Dire";
         else
-            winner = "radiant";
+            winner = "Radiant";
     }
 
     public String getDuration()

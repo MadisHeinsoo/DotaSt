@@ -1,5 +1,9 @@
 package com.schoolstuff;
 
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.panel.FeedbackPanel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.WebPage;
@@ -15,60 +19,49 @@ import java.nio.charset.StandardCharsets;
 
 public class HomePage extends WebPage
 {
-    //Generates XML document based on query.
-    private Document responseXML(String url, String charset, String query)
-    {
-        Document respXML = null;
-        try
-        {
-            //Creates connection object and streams information from constructed URL to response variable.
-            URLConnection connection = new URL(url + "?" + query).openConnection();
-            connection.setRequestProperty("Accept-Charset", charset);
-            InputStream response = connection.getInputStream();
 
-            //Defines a factory API to create DOM object trees from XML document
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-
-            //Parses information from recieved GET request into previously created Document object.
-            respXML = builder.parse(response);
-        }
-        catch(Exception e)
-        {
-            //There could possibly be 3 different exceptions in try block.
-            e.printStackTrace();
-        }
-
-        //Removes whitespaces and fixes some structure issues.
-        respXML.getDocumentElement().normalize();
-        return respXML;
-    }
 
 	public HomePage(final PageParameters parameters)
 	{
 		super(parameters);
 
-		//Variables that are required for basic functioning.
-        String url = "https://api.steampowered.com/IDOTA2Match_570/GetMatchDetails/v1/";
-        String charset = StandardCharsets.UTF_8.toString();
-        String key = "DD2F5A5CC5099227EA909DE0C6B7E35D";
-        String matchID = "2880899735";
-        String format = "XML";
+		//Shows user what he did wrong if he makes a mistake
+        add(new FeedbackPanel("feedback"));
 
-        //Generates query part in URL
-        String query = String.format("format=%s&match_id=%s&key=%s", format, matchID, key);
+        //Textfield that has "matchid" as id in html file. User input will be saved here.
+        final TextField<String> matchID = new TextField<String>("matchid",
+                Model.of(""));
 
-        //Calls responseXML method and saves return value in Document object
-        Document response = responseXML(url, charset, query);
+        //MatchID can't be empty
+        matchID.setRequired(true);
 
-        //Creates a match object.
-        MatchDetails match = new MatchDetails(response);
+        //Checks if user input was correct.
+        matchID.add(new SearchValidator());
 
-        //Shows information on html file
-        add(new Label("matchnumber", match.getMatchid()));
-        add(new Label("matchduration", match.getDuration()));
-        add(new Label("rscore", match.getRadiantScore()));
-        add(new Label("dscore", match.getDireScore()));
-        add(new Label("winner", match.getWinner()));
+        //Creates a form logic
+        Form<?> form = new Form<Void>("searchForm")
+        {
+            //Notes that parent class method is overwritten. Doesn't have to be added. Method itself is supposed to do something when input is submitted to form.
+            @Override
+            protected void onSubmit()
+            {
+                //Gets matchid from "matchID" variable that was typed in textfield.
+                final String matchidValue = matchID.getModelObject();
+
+                //Create PageParameters object and add matchid there.
+                PageParameters pageParameters = new PageParameters();
+                pageParameters.add("matchid", matchidValue);
+
+                //New html page will be loaded which logic is in MatchPage.class with PageParameter object that contains matchID input.
+                setResponsePage(MatchPage.class, pageParameters);
+
+            }
+
+        };
+
+        //Form gets added to html and textfield gets added to that form.
+        add(form);
+        form.add(matchID);
+
     }
 }
