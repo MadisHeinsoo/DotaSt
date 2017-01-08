@@ -8,7 +8,9 @@ import org.w3c.dom.Element;
  */
 public class MatchDetails
 {
-    private String duration;
+    private String durationHours;
+    private String durationMinutes;
+    private String durationSeconds;
     private String matchid;
     private String radiantScore;
     private String direScore;
@@ -18,7 +20,6 @@ public class MatchDetails
     public MatchDetails(Document xmlDocument)
     {
         Element rootElement = xmlDocument.getDocumentElement();
-        duration = rootElement.getElementsByTagName("duration").item(0).getTextContent();
         matchid = rootElement.getElementsByTagName("match_id").item(0).getTextContent();
         radiantScore = rootElement.getElementsByTagName("radiant_score").item(0).getTextContent();
         direScore =  rootElement.getElementsByTagName("dire_score").item(0).getTextContent();
@@ -26,11 +27,35 @@ public class MatchDetails
             winner = "Dire";
         else
             winner = "Radiant";
+
+        //Default match duration is in seconds so convert it into hours, minutes and seconds.
+        int durationinseconds = Integer.parseInt(rootElement.getElementsByTagName("duration").item(0).getTextContent());
+        durationHours = Integer.toString(durationinseconds/3600);
+        durationinseconds = durationinseconds%3600;
+        if (durationinseconds/60 < 10)
+            durationMinutes = "0" + Integer.toString(durationinseconds/60);
+        else
+            durationMinutes = Integer.toString(durationinseconds/60);
+        durationinseconds = durationinseconds%60;
+        if (durationinseconds < 10)
+            durationSeconds = "0" + Integer.toString(durationinseconds);
+        else
+            durationSeconds = Integer.toString(durationinseconds);
     }
 
-    public String getDuration()
+    public String getDurationHours()
     {
-        return duration;
+        return durationHours;
+    }
+
+    public String getDurationMinutes()
+    {
+        return durationMinutes;
+    }
+
+    public String getDurationSeconds()
+    {
+        return durationSeconds;
     }
 
     public String getMatchid()

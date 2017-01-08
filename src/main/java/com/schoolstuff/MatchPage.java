@@ -40,7 +40,9 @@ public class MatchPage extends WebPage
 
         //Shows information on html file
         add(new Label("matchnumber", match.getMatchid()));
-        add(new Label("matchduration", match.getDuration()));
+        add(new Label("matchdurationHours", match.getDurationHours()));
+        add(new Label("matchdurationMinutes", match.getDurationMinutes()));
+        add(new Label("matchdurationSeconds", match.getDurationSeconds()));
         add(new Label("rscore", match.getRadiantScore()));
         add(new Label("dscore", match.getDireScore()));
         add(new Label("winner", match.getWinner()));
